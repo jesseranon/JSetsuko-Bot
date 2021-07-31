@@ -14,3 +14,8 @@ Features
 1. moderation -> giving/removing a user a role, kicking/banning a user, storing information for use of a warning/kick/ban system
 2. a web scraper for entertainment purposes
 3. a simple game that can be initiated with a command
+
+- config.json
+Removed to protect private information.  Contains the following key-value pair in its json Object that is used for commands:
+
+"prefix": "!",
