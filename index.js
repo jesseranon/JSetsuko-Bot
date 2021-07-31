@@ -1,18 +1,6 @@
 const Discord = require('discord.js');
 const { prefix, token } = require('./config.json')
 const client = new Discord.Client();
-var scraper = require('images-scraper');
-
-const google = new scraper({
-    puppeteer: {
-        headless: false,
-    },
-});
-
-(async () => {
-    const results = await google.scrape('retsuko', 50);
-    console.log('results', results);
-})();
 
 // Command/Argument banks
 const commands = {
