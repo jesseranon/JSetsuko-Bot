@@ -16,6 +16,7 @@ Features
 3. a simple game that can be initiated with a command
 
 - config.json
+
 Removed to protect private information.  Contains the following key-value pair in its json Object that is used for commands:
 
 "prefix": "!",
