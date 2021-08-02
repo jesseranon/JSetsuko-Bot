@@ -14,20 +14,16 @@ module.exports = {
         "please": "UwU"
     },
     execute(message, embed, args='') {
-        console.log(message.content);
         var fieldTitle = `\`!retsuko`;
-        if (!args[0] in this.pics || !args.length) {
+        if (args[0] in this.pics == false || !args.length) {
             fieldTitle += ` help\``;
             // send picture if argument matches
-            console.log(`setting help description`);
             embed.setDescription(`${this.help}`);
         } else {
             fieldTitle += ` ${args[0]}\``;
             if (args[0] == 'please') {
-                console.log(`setting description`);
                 embed.setDescription(`${this.pics["please"]}`);
             } else {
-                console.log(`setting image`)
                 embed.setImage(this.pics[args[0]]);
             }
         }
