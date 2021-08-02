@@ -5,15 +5,17 @@ This is a bot created for Discord with the assistance of Node.js and Discord.js.
 Features
 - This bot will listen for commands from Discord users in the channels it has access to.
 
-- Responses will include:
-1. simple text responses
+- Responses include:
+1. simple text responses 
 2. display a user's avatar
 3. display a picture from a curated album
+4. uwufy text
 
-- Future plans:
+- Future plans (ideas):
 1. moderation -> giving/removing a user a role, kicking/banning a user, storing information for use of a warning/kick/ban system
-2. a web scraper for entertainment purposes
+2. a web scraper for interaction
 3. a simple game that can be initiated with a command
+4. a database for user milestones
 
 - config.json
 
