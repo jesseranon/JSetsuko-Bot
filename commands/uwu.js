@@ -3,21 +3,22 @@ module.exports = {
     description: "OwO!",
     toggle: false,
     help: "\`!uwu toggle\` me UwU",
-    execute(message, args) {
-        console.log(`Executing !uwu with message content: ${message.content}`);
-        console.log(`Executing !uwu with # of args: ${args.length}`);
+    execute(message, embed, args) {
+        var fieldTitle = `\`!uwu`;
         if (args[0] == 'toggle') {
+            fieldTitle += ` toggle\``;
             this.toggle = !this.toggle;
             if (this.toggle) {
-                message.channel.send(`My UwU's have been activated ${this.description}`)
+                embed.setDescription(`My UwU's have been activated ${this.description}`)
             } else {
-                message.channel.send(`My UwU's have been snatched ${this.description}`)
+                embed.setDescription(`My UwU's have been snatched ${this.description}`)
             }
         } else if (!args.length || !this.toggle) {
-            message.channel.send(this.description);
-            return;
+            fieldTitle += `\``;
+            embed.setDescription(`${this.description}`);
         } else if (this.toggle) {
             // change all r and l's in args to w's and return them in a message.
+            fieldTitle += ` (message)\``;
             var res = '';
             var i = 0;
             while (i < args.length) {
@@ -27,9 +28,13 @@ module.exports = {
                     .split('R').join('W')} `;
                 i ++;
             }
-            message.channel.send(res);
+            embed.setDescription(`${res}`);
         } else {
-            message.reply(this.help);
+            fieldTitle += ` help\``;
+            embed.setDescription(`${this.help}`);
         }
+        embed.setTitle(fieldTitle);
+        message.reply(embed);
+        embed.setDescription('');
     },
 };

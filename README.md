@@ -16,6 +16,8 @@ Features
 2. a web scraper for interaction
 3. a simple game that can be initiated with a command
 4. a database for user milestones
+5. one-bot welcome wagon
+6. "bah god! it's @non-bot-user's entrance music!" 
 
 - config.json
 

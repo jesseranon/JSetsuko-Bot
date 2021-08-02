@@ -1,14 +1,22 @@
 module.exports = {
     name: "avatar",
     description: "Look at someone's avatar.",
-    help: "\`!avatar me or @user\`",
-    execute(message, args) {
+    help: "Try using \`!avatar me or @user\`",
+    execute(message, embed, args) {
+        var fieldTitle = `\`!avatar`;
         if (args[0] == 'me') {
-            message.channel.send(message.author.displayAvatarURL());
+            fieldTitle += ` me\``;
+            embed.setTitle(`${fieldTitle}`).setImage(`${message.author.displayAvatarURL()}`);
         } else if (message.mentions.members.size) {
-            message.channel.send(message.mentions.users.first().displayAvatarURL());
+            const userMentioned = message.mentions.users.first();
+            fieldTitle += ` ${args[0]}\``;
+            embed.setTitle(`${fieldTitle}`).setImage(`${userMentioned.displayAvatarURL()}`);
         } else {
-            message.reply(this.help);
+            fieldTitle += ` help\``
+            embed.setTitle(`${fieldTitle}`).setDescription(`${this.help}`);
         }
+
+        message.reply(embed);
+        embed.setImage('').setDescription('');
     },
 };

@@ -20,27 +20,12 @@ client.once('ready', () => {
     console.log('Ready!');
 });
 
-// Generate help embed
-// var helpEmbed = new Discord.MessageEmbed()
-//     .setTitle('\`@JSetsuko-Bot\`')
-//     .setDescription('A sexy unicorn bot')
-//     .setThumbnail(commands["retsuko"]["bot-avatar"])
-//     .setAuthor(`Jetsuko`, commands["retsuko"]["jetsuko-avatar"])
-//     .setColor('ORANGE');
-
-// // Add fields to help embed
-// for (let k in commands) {
-//     let kommand = commands[k];
-//     if (typeof commands[k] !== 'string') {
-//         helpEmbed.addField(`\`!${k} ${kommand["tip"]}\``, `=> ${kommand["help"]}`);
-//     } else {
-//         if (commands[k]["user"]) {
-
-//         } else {
-//             helpEmbed.addField(`\`!${k}\``, `=> ${kommand}`);
-//         }
-//     }
-// }
+// Generate generic embed
+var botEmbed = new Discord.MessageEmbed()
+     .setAuthor('@JSetsuko-Bot', client.commands.get('retsuko').pics["bot-avatar"])
+     .setFooter('@JSetsuko-Bot - Your sexy unicorn virtual boyfriend/Discord bot')
+     .setThumbnail(client.commands.get("retsuko").pics["bot-avatar"])
+     .setColor('ORANGE');
 
 //listen for messages sent in all channels the bot is in
 client.on('message', message => {
@@ -51,7 +36,7 @@ client.on('message', message => {
         //special response to creator
         if (message.author.id == creatorid) {
             message.reply(`buy 20 outfits right now and get ten percent off <3`)
-                .then(sent => console.log(`Your wish is my command, Retsuko`))
+                .then(() => console.log(`Your wish is my command, Retsuko`))
                 .catch(console.error);
         }
 
@@ -79,7 +64,7 @@ client.on('message', message => {
 
         //execute commands from modules
         try {
-            client.commands.get(command).execute(message, args);
+            client.commands.get(command).execute(message, botEmbed, args);
         } catch (error) {
             console.log(`There was an error trying to execute !${command}`);
         }
