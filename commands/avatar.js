@@ -6,16 +6,16 @@ module.exports = {
         var fieldTitle = `\`!avatar`;
         if (args[0] == 'me') {
             fieldTitle += ` me\``;
-            embed.setTitle(`${fieldTitle}`).setImage(`${message.author.displayAvatarURL()}`);
+            embed.setImage(`${message.author.displayAvatarURL({dynamic: true, size: 128})}`);
         } else if (message.mentions.members.size) {
             const userMentioned = message.mentions.users.first();
-            fieldTitle += ` ${args[0]}\``;
-            embed.setTitle(`${fieldTitle}`).setImage(`${userMentioned.displayAvatarURL()}`);
+            fieldTitle += ` \``+ '@' + userMentioned.tag;
+            embed.setImage(`${userMentioned.displayAvatarURL({dynamic: true, size: 128})}`);
         } else {
             fieldTitle += ` help\``
-            embed.setTitle(`${fieldTitle}`).setDescription(`${this.help}`);
+            embed.setDescription(`${this.help}`);
         }
-
+        embed.setTitle(`${fieldTitle}`)
         message.reply(embed);
         embed.setImage('').setDescription('');
     },
