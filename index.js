@@ -83,20 +83,16 @@ client.on('message', message => {
         // console.log(away > awaymath);
 
         // mod commands check permissions for user and bot
-        console.log(`checking member and bot permissions`)
-        console.log(`${message.member.id} has admin permission: ${message.member.hasPermission('ADMINISTRATOR')}`);
-        console.log(`${message.guild.me.id} has admin permission: ${message.guild.me.hasPermission('ADMINISTRATOR')}`);
-
-        if (!message.member.hasPermission('ADMINISTRATOR') || !message.guild.me.hasPermission('ADMINISTRATOR')) {
-            console.log(`checking member and bot permissions to perform command ${command}`);
-            console.log(`${message.member.id} has ${permissions[command]} permission: ${message.member.hasPermission(permissions[command])}`);
-            console.log(`${message.guild.me.id} has ${permissions[command]} permission: ${message.guild.me.hasPermission(permissions[command])}`);
-            if (!message.member.hasPermission(permissions[command]) || !message.guild.me.hasPermission(permissions[command])) {
-                    // either don't have permission
-                    console.log(`Insufficient permissions to perform ${command}`);
+        if (command in permissions) {
+            if (!message.member.hasPermission('ADMINISTRATOR') || !message.guild.me.hasPermission('ADMINISTRATOR')) {
+                if (!message.member.hasPermission(permissions[command]) || !message.guild.me.hasPermission(permissions[command])) {
+                    //bot hasn't been granted permission
+                    console.log(`${message.author.tag} used !${command}.  It failed...`);
                     return;
+                }
             }
         }
+        
         //if you made it here, do the thing because you both can
         console.log(`Sufficient permissions to perform ${command}`);
 

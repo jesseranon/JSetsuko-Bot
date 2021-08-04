@@ -12,7 +12,7 @@ module.exports = {
         "atrest": "https://i.imgur.com/cEZDbbj.png",
         "atpanic": "https://i.imgur.com/HxOKJ3V.png",
         "rage": "https://i.imgur.com/HEBmeGH.jpg",
-        "please": "https://i.imgur.com/XTs74q9.png"
+        "please": "https://i.imgur.com/Y8UFhGz.png"
     },
     execute(message, embed, args='') {
         var fieldTitle = `\`!retsuko`;
