@@ -17,9 +17,10 @@ Features
 1. kick
 2. ban
 3. unban
+4. create/delete text/voice/category channels
 
 - Future plans (ideas):
-1. moderation -> giving/removing a user a role, storing information for use of a warning/kick/ban system, channel creation/deletion, move user, responses for certain operations re-directed to a dedicated bot room for audit (messages that are edited/deleted, other Mod Tool events, etc. to prevent server TOS violations)
+1. moderation -> giving/removing a user a role, storing information for use of a warning/kick/ban system, move user, responses for certain operations re-directed to a dedicated bot room for audit (messages that are edited/deleted, other Mod Tool events, etc. to prevent server TOS violations)
 2. a web scraper or webhook for interaction
 3. a simple game that can be initiated with a command
 4. a database for user milestones
