@@ -31,3 +31,5 @@ Features
 
 "prefix": "!",
 "permissions": {"mod-tool": "PERMISSION_FLAG"}
+
+- users.json - Removed to protect private information.  Will be used to store information for future moderation commands.
