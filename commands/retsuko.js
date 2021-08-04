@@ -15,19 +15,15 @@ module.exports = {
         "please": "https://i.imgur.com/Y8UFhGz.png"
     },
     memberfacing: true,
-    execute(message, embed, args='') {
+    execute(message, embed, args=['help']) {
         var fieldTitle = `\`!retsuko`;
-        if (args[0] in this.pics == false || !args.length) {
+        if (args[0] in this.pics == false || args[0] == 'help') {
             fieldTitle += ` help\``;
             // send picture if argument matches
             embed.setDescription(`${this.help}`);
         } else {
             fieldTitle += ` ${args[0]}\``;
-            if (args[0] == 'please') {
-                embed.setDescription(`${this.pics["please"]}`);
-            } else {
-                embed.setImage(this.pics[args[0]]);
-            }
+            embed.setImage(this.pics[args[0]]);
         }
         embed.setTitle(fieldTitle);
         message.reply(embed);
