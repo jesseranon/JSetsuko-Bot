@@ -2,7 +2,11 @@ module.exports = {
     name: "unban",
     description: "Mod tool for banning members",
     help: "\`!unban (userid)\` but only if you actually mean it",
+    memberfacing: true,
     execute(message, embed, args) {
+
+        console.log(`*****MOD TOOLS: ${this.name} evoked in ${message.guild.name} by ${message.author.tag}.*****`); // for logging
+        
         var fieldTitle = `\`!unban`;
         var fieldDes = ``
         // ensure first argument a user tag or id
@@ -67,8 +71,6 @@ module.exports = {
             embed.setTitle('').setDescription('');
             
         }
-       
-        console.log(`*****MOD TOOLS: ${this.name} evoked in ${message.guild.name} by ${message.author.tag}.*****`); // for logging
 
     },
 };

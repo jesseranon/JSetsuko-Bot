@@ -2,6 +2,7 @@ module.exports = {
     name: "avatar",
     description: "Look at someone's avatar.",
     help: "Try using \`!avatar me or @user\`",
+    memberfacing: true,
     execute(message, embed, args) {
         var fieldTitle = `\`!avatar`;
         if (args[0] == 'me') {

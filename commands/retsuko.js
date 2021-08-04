@@ -14,6 +14,7 @@ module.exports = {
         "rage": "https://i.imgur.com/HEBmeGH.jpg",
         "please": "https://i.imgur.com/Y8UFhGz.png"
     },
+    memberfacing: true,
     execute(message, embed, args='') {
         var fieldTitle = `\`!retsuko`;
         if (args[0] in this.pics == false || !args.length) {

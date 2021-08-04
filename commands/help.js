@@ -8,7 +8,7 @@ module.exports = {
         if (this.description == '') {
             for (const file of commandFiles) {
                 const command = require(`./${file}`);
-                if (command.name != 'help') {
+                if (command.name != 'help' && !command.memberfacing) {
                     this.description += `\`!${command.name}\` => ${command.description}\n`;
                 }
             }

@@ -2,9 +2,14 @@ module.exports = {
     name: "channel",
     description: "Mod tool for managing channels",
     help: "\`!channel (create|delete) (type) (name)\` use 3 arguments",
+    memberfacing: true,
     execute(message, embed, args) {
+
+        console.log(`*****MOD TOOLS: ${this.name} evoked in ${message.guild.name} by ${message.author.tag}.*****`); // for logging
+
         var fieldTitle = `\`!channel`;
         if (args.length == 3) {
+
             const act = args.shift();
             if (act != 'create' && act != 'delete') {
                 fieldTitle += ` create|delete\``;
@@ -13,17 +18,18 @@ module.exports = {
                 embed.setTitle('').setDescription('');
                 return;
             }
+
             const t = args.shift();
             const ts = ['text', 'voice', 'category']
             if (!ts.includes(t)) {
-                fieldTitles += ` ${act} (type)\``;
+                fieldTitle += ` ${act} (type)\``;
                 embed.setTitle(fieldTitle).setDescription(`next argument must be a valid type: text | voice | category`);
                 message.reply(embed);
                 embed.setTitle('').setDescription('');
                 return;
             }
-            const cname = args.shift();
 
+            const cname = args.shift();
             // check for {type} channel with {cname} in guild
             const gc = message.guild.channels.cache.find(channel => channel.name.toLowerCase() == cname && channel.type == t);
             fieldTitle = `\`${message.content}\``;
@@ -74,6 +80,5 @@ module.exports = {
             embed.setTitle('').setDescription('');
         }
 
-        console.log(`*****MOD TOOLS: ${this.name} evoked in ${message.guild.name} by ${message.author.tag}.*****`); // for logging
     },
 };

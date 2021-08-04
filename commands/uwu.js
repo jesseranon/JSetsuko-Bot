@@ -3,19 +3,21 @@ module.exports = {
     description: "OwO!",
     toggle: false,
     help: "\`!uwu toggle\` me UwU",
+    memberfacing: true,
     execute(message, embed, args) {
         var fieldTitle = `\`!uwu`;
+        var fieldDes = ``;
         if (args[0] == 'toggle') {
             fieldTitle += ` toggle\``;
             this.toggle = !this.toggle;
             if (this.toggle) {
-                embed.setDescription(`My UwU's have been activated ${this.description}`)
+                fieldDes += `My UwU's have been activated ${this.description}`;
             } else {
-                embed.setDescription(`My UwU's have been snatched ${this.description}`)
+                fieldDes += `My UwU's have been snatched ${this.description}`;
             }
         } else if (!args.length || !this.toggle) {
             fieldTitle += `\``;
-            embed.setDescription(`${this.description}`);
+            fieldDes += `${this.description}`;
         } else if (this.toggle) {
             // change all r and l's in args to w's and return them in a message.
             fieldTitle += ` (message)\``;
@@ -28,12 +30,12 @@ module.exports = {
                     .split('R').join('W')} `;
                 i ++;
             }
-            embed.setDescription(`${res}`);
+            fieldDes += `${res}`;
         } else {
             fieldTitle += ` help\``;
-            embed.setDescription(`${this.help}`);
+            fieldDes += `${this.help}`;
         }
-        embed.setTitle(fieldTitle);
+        embed.setTitle(fieldTitle).setDescription(fieldDes);
         message.reply(embed);
         embed.setDescription('');
     },
