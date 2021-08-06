@@ -1,16 +1,36 @@
 const fs = require('fs');
-const Discord = require('discord.js');
+const { sep } = require('path');
+const { Client, Collection } = require('discord.js');
 const { prefix, token, creatorid, guildsmanaged, permissions } = require('./config.json');
 
-const client = new Discord.Client();
-client.commands = new Discord.Collection();
+const bot = new Client();
+bot.commands = new Collection();
 
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const load = (d = "./commands") => {
 
-for (const file of commandFiles) {
-    const command = require(`./commands/${file}`);
-    client.commands.set(command.name, command);
+    fs.readdirSync(d).forEach(dirs => {
+        const commands = fs.readdirSync(`${d}${sep}${dirs}${sep}`).filter(files => files.endsWith(".js"));
+        for (const file of commands) {
+            console.log(file);
+        }
+        //console.log(fs.statSync(`${d}/${file}`));
+        // if (fs.statSync(file).isDirectory()) {
+        //     load(`${d}/${file}/`)
+        // } else if (file.endsWith('.js')) {
+        //     bot.commands.set(file.name, file)
+        // }
+    });
+
+    // for (const file of commandFiles) {
+    //     if (file.isDirectory()) {
+
+    //     }
+    //     const command = require(`./commands/${file}`);
+    //     bot.commands.set(command.name, command);
+    // }
 }
+
+load();
 
 // future: aliases, separating mod/admin commands from others, possible folder categories
 
@@ -18,25 +38,19 @@ for (const file of commandFiles) {
 //console.log(client.commands);
 
 //initiate client
-client.once('ready', () => {
-    console.log('Ready!');
-    console.log(client.guilds.cache.forEach(g => {
-        if (g.available) {
-            g.roles.cache.forEach(r => {
-                console.log(r.permissions);
-            });
-        }
-    }));
+bot.once('ready', () => {
+    console.log('JSetsuko-Bot is online!');
+    // console.log(bot.commands);
 });
 
 // // Generate generic embed
 // var botEmbed = new Discord.MessageEmbed()
-//      .setAuthor('@JSetsuko-Bot', client.commands.get('retsuko').pics["bot-avatar"])
-//      .setThumbnail(client.commands.get("retsuko").pics["bot-avatar"])
+//      .setAuthor('@JSetsuko-Bot', bot.commands.get('retsuko').pics["bot-avatar"])
+//      .setThumbnail(bot.commands.get("retsuko").pics["bot-avatar"])
 //      .setColor('ORANGE');
 
 // //listen for messages sent in all channels the bot is in
-// client.on('message', message => {
+// bot.on('message', message => {
 
 //     //ignore messages that are not from a guild or are from a bot
 //     if (!message.guild || message.author.bot) return;
@@ -53,7 +67,7 @@ client.once('ready', () => {
 
 //         //respond with help
 //         try {
-//             client.commands.get('help').execute(message,botEmbed);
+//             bot.commands.get('help').execute(message,botEmbed);
 //         } catch (error) {
 //             console.log(`There was an error trying to execute !help via @JSetsuko-Bot tag`);
 //         }
@@ -119,4 +133,4 @@ client.once('ready', () => {
 // });
 
 //login
-client.login(token);
+bot.login(token);

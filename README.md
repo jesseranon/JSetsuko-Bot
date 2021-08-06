@@ -33,3 +33,9 @@ Features
 "permissions": {"mod-tool": "PERMISSION_FLAG"}
 
 - users.json - Removed to protect private information.  Will be used to store information for future moderation commands.
+
+new-branch
+
+I want to re-factor my code so that I can organize my commands into different folders as well as adding aliases for flexibility.  I also want to put my helpers into a separate folder because I've found that I am repeating a lot of things in my commands, especially when it comes to embeds.  This will require changing the way the commands Collection is built, as well as changing the commands themselves.
+
+I found the following for inspiration and did some reading into 'fs' and 'path' to get some understanding on how they pulled and structured their commands and module exports: https://gist.github.com/zedxos/c5fcf33a30213e0a08db4f46498816d4
