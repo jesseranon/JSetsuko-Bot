@@ -56,7 +56,7 @@ module.exports = {
                         message.reply(embed);
                         embed.setTitle('').setDescription('');
                     })
-                    .catch(err=>{
+                    .catch(()=>{
                         fieldDes = `Unable to ${this.name} ${u}`;
                         embed.setTitle(fieldTitle).setDescription(fieldDes);
                         message.reply(embed);
