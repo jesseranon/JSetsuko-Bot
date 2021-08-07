@@ -1,15 +1,9 @@
-module.exports = {
-    name: "ban",
-    description: "Mod tool for banning members",
-    help: "\`!ban @user (days) (reason)\` if no days, defaults to 3 days",
-    memberfacing: true,
-    execute(message, embed, args) {
+module.exports.run = (message, embed, args) => {
 
         console.log(`*****MOD TOOLS: ${this.name} evoked in ${message.guild.name} by ${message.author.tag}.*****`);
 
-        var fieldTitle = `\`!ban`;
-        var fieldDes = ``
-        var bandays = 0;
+        var fieldTitle = `\`!kick`;
+        var fieldDes = ``;
         // ensure first argument is a user
         if (message.mentions.users.size == 1 && args[0] == `<@!${message.mentions.users.first().id}>`) {
 
@@ -18,47 +12,38 @@ module.exports = {
             const m = message.guild.member(u);
             fieldTitle += ` @${u.tag}\``
 
-            // if member is not bannable, reply and bail
-            if (!m.bannable) {
+            if (!m.kickable) {
                 fieldDes += `${message.author} you hold no dominion over ${m}.`
                 embed.setTitle(fieldTitle).setDescription(fieldDes);
                 message.reply(embed);
                 embed.setTitle('').setDescription('');
                 return;
             }
-
-            fieldDes += `${m} has been banned by ${message.author}`;
-            args.shift(); // remove command from args
-            var bandays = args.shift(); // first remaining arg
-            if (isNaN(bandays)) {
-                args.unshift(bandays);
-                bandays = 3;
-            }
-            fieldDes += ` for ${bandays} days.`;
-            var breason = ``;
+            
+            fieldDes += `${u} has been kicked by ${message.author}.`;
+            args.shift();
+            var reason = ``;
             // append reasons
-            if (args) {
-                fieldDes += `\nReason: `;
+            if (args.length) {
+                fieldDes += `\nReason:`;
                 let i = 0;
                 while (i < args.length) {
-                    breason += ` ${args[i]}`;
+                    reason += ` ${args[i]}`;
                     i++;
                 }
             }
-            // perform ban
+            // perform kick
             if (u) {
                 if (m) {
                     m
-                    .ban({days: bandays, reason: breason})
-                    .then(()=>{
-                        fieldDes += `${breason}\nLet this be a warning to the rest of you.`
-                        embed.setTitle(fieldTitle).setDescription(fieldDes);
+                    .kick(reason)
+                    .then(() => { //returns GuildMember
+                        embed.setTitle(fieldTitle).setDescription(`${fieldDes} ${reason}`);
                         message.reply(embed);
                         embed.setTitle('').setDescription('');
                     })
-                    .catch(()=>{
-                        fieldDes = `Unable to ${this.name} ${u}`;
-                        embed.setTitle(fieldTitle).setDescription(fieldDes);
+                    .catch(err=>{
+                        embed.setTitle(fieldTitle).setDescription(err);
                         message.reply(embed);
                         embed.setTitle('').setDescription('');
                         return;
@@ -69,11 +54,16 @@ module.exports = {
         } else {
 
             fieldTitle += ` help\``;
-            embed.setTitle(fieldTitle).setDescription(`${this.help}`);
+            embed.setTitle(fieldTitle).setDescription(this.help);
             message.reply(embed);
             embed.setTitle('').setDescription('');
-
         }
 
-    },
+};
+
+module.exports.help = {
+    name: "kick",
+    description: "Mod tool for kicking a single user",
+    help: "\`kick @user (reason)\` but they can re-join later with an invite",
+    aliases: ["k"],
 };

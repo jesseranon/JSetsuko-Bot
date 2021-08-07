@@ -1,9 +1,4 @@
-module.exports = {
-    name: "channel",
-    description: "Mod tool for managing channels",
-    help: "\`!channel (create|delete) (type) (name)\` use 3 arguments",
-    memberfacing: true,
-    execute(message, embed, args) {
+module.exports.run = (bot, message, args) => {
 
         console.log(`*****MOD TOOLS: ${this.name} evoked in ${message.guild.name} by ${message.author.tag}.*****`); // for logging
 
@@ -80,5 +75,11 @@ module.exports = {
             embed.setTitle('').setDescription('');
         }
 
-    },
+};
+
+module.exports.help = {
+    name: "channel",
+    description: "Mod tool for managing channels",
+    usage: "\`!channel (create|delete) (type) (name)\` use 3 arguments",
+    aliases: ["c"],
 };

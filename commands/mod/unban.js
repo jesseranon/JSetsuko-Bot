@@ -1,9 +1,4 @@
-module.exports = {
-    name: "unban",
-    description: "Mod tool for banning members",
-    help: "\`!unban (userid)\` but only if you actually mean it",
-    memberfacing: true,
-    execute(message, embed, args) {
+module.exports.run = (message, embed, args) => {
 
         console.log(`*****MOD TOOLS: ${this.name} evoked in ${message.guild.name} by ${message.author.tag}.*****`); // for logging
         
@@ -72,5 +67,11 @@ module.exports = {
             
         }
 
-    },
+};
+
+module.exports.help = {
+    name: "unban",
+    description: "Mod tool for unbanning members",
+    usage: "\`!unban (userid)\` but only if you actually mean it",
+    aliases: ["ub"],
 };

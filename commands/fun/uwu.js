@@ -1,24 +1,18 @@
-module.exports = {
-    name: "uwu",
-    description: "OwO!",
-    toggle: false,
-    help: "\`!uwu toggle\` me UwU",
-    memberfacing: true,
-    execute(message, embed, args) {
+module.exports.run = (message, embed, args) => {
         var fieldTitle = `\`!uwu`;
         var fieldDes = ``;
         if (args[0] == 'toggle') {
             fieldTitle += ` toggle\``;
             this.toggle = !this.toggle;
-            if (this.toggle) {
-                fieldDes += `My UwU's have been activated ${this.description}`;
+            if (this.help.toggle) {
+                fieldDes += `My UwU's have been activated ${this.help.description}`;
             } else {
-                fieldDes += `My UwU's have been snatched ${this.description}`;
+                fieldDes += `My UwU's have been snatched ${this.help.description}`;
             }
         } else if (!args.length || !this.toggle) {
             fieldTitle += `\``;
             fieldDes += `${this.description}`;
-        } else if (this.toggle) {
+        } else if (this.help.toggle) {
             // change all r and l's in args to w's and return them in a message.
             fieldTitle += ` (message)\``;
             var res = '';
@@ -33,10 +27,17 @@ module.exports = {
             fieldDes += `${res}`;
         } else {
             fieldTitle += ` help\``;
-            fieldDes += `${this.help}`;
+            fieldDes += `${this.help.usage}`;
         }
         embed.setTitle(fieldTitle).setDescription(fieldDes);
         message.reply(embed);
         embed.setDescription('');
-    },
 };
+
+module.exports.help = {
+    name: "uwu",
+    description: "OwO!",
+    toggle: false,
+    usage: "\`!uwu toggle\` me UwU",
+    aliases: ["owo"],
+}
