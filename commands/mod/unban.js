@@ -1,7 +1,8 @@
-module.exports.run = (message, embed, args) => {
+const h = require('../helpers/helpers2.js');
 
-        console.log(`*****MOD TOOLS: ${this.name} evoked in ${message.guild.name} by ${message.author.tag}.*****`); // for logging
+module.exports.run = (bot, message, args) => {
         
+        var ubEmbed = h.createEmbed(bot);
         var fieldTitle = `\`!unban`;
         var fieldDes = ``
         // ensure first argument a user tag or id
@@ -14,25 +15,20 @@ module.exports.run = (message, embed, args) => {
             thisGuild.fetchBans()
                 .then(bans => {
                     if (bans.size == 0) {
-                        embed.setTitle(fieldTitle).setDescription(`This server has no bans! Give it time, young padawan.`)
-                        message.reply(embed);
-                        embed.setTitle('').setDescription('');
+                        h.setEmbed(message, ubEmbed, {title: fieldTitle, dx: `This server has no bans`});
                         return;
                     }
                     let bUser = bans.find(ban => ban.user.id == u);
                     if (!bUser) {
-                        embed.setDescription(`${u} is not banned in ${message.guild.name}'s Bans.`)
-                        message.reply(embed);
-                        embed.setTitle('').setDescription('');
+                        h.setEmbed(message, ubEmbed, {title: fieldTitle, dx: `${u} is not banned in ${message.guild.name}.`})
                         return;                      
                     }
                     // append reasons
                     var reason = '';
                     const bt = `${bUser.user.username}#${bUser.user.discriminator}`;
-                    fieldDes += `${message.author} unbanned ${bt}.`;
 
                     if (args.length > 0) {
-                        fieldDes += `\nReason: `;
+                        reason += `\nReason: `;
                         let i = 0;
                         while (i < args.length) {
                             reason += `${args[i]} `;
@@ -41,30 +37,27 @@ module.exports.run = (message, embed, args) => {
                     }
                     thisGuild.members.unban(u, reason)
                         .then(user => {
-                            embed.setTitle(fieldTitle).setDescription(`${fieldDes}${reason}\nRedemption is possible, but never guaranteed.`);
-                            message.reply(embed);
-                            embed.setTitle('').setDescription('');
+                            fieldDes += `${message.author} unbanned ${bt}.`;
+                            if (reason.length) fieldDes += reason;
+                            fieldDes += `\nRedemption is possible, but never guaranteed.`;
+                            h.setEmbed(message, ubEmbed, {title: fieldTitle, dx: fieldDes});
+                            console.log(`${message.guild.name}: ${fieldDes}`);
                         })
                         .catch(err => {
-                            embed.setTitle(fieldTitle).setDescription(`${err}`);
-                            message.reply(embed);
-                            embed.setTitle('').setDescription('');
+                            h.setEmbed(message, ubEmbed, {title: fieldTitle, dx: err});
+                            console.log(`${message.guild.name}: ${this.help.name} command issue failed:\n${err}`);
                             return;
                         });
                 })
                 .catch(err=>{
-                    embed.setTitle(fieldTitle).setDescription(`${err}`);
-                    message.reply(embed);
-                    embed.setTitle('').setDescription('');
+                    h.setEmbed(message, ubEmbed, {title: fieldTitle, dx: err});
+                    console.log(`${message.guild.name}: ${this.help.name} command issue failed:\n${err}`);
                     return;
                 });
 
         } else {
-            fieldTitle += ` help\``;
-            embed.setTitle(fieldTitle).setDescription(this.help);
-            message.reply(embed);
-            embed.setTitle('').setDescription('');
-            
+            fieldTitle += `\``;
+            h.setEmbed(message, ubEmbed, {title: fieldTitle, dx: `For help with this command, type \`${bot.prefix}help ${this.help.name}\``});            
         }
 
 };

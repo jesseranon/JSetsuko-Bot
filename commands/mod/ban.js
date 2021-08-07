@@ -1,39 +1,51 @@
-module.exports.run = (message, embed, args) => {
+const h = require('../helpers/helpers2.js');
 
-        console.log(`*****MOD TOOLS: ${this.name} evoked in ${message.guild.name} by ${message.author.tag}.*****`);
+module.exports.run = (bot, message, args) => {
+
+        var banEmbed = h.createEmbed(bot);
 
         var fieldTitle = `\`!ban`;
         var fieldDes = ``
-        var bandays = 0;
-        // ensure first argument is a user
-        if (message.mentions.users.size == 1 && args[0] == `<@!${message.mentions.users.first().id}>`) {
-
+        
+        // ensure first argument is a user or a member ID
+        if ((message.mentions.users.size == 1 && args[0] == `<@!${message.mentions.users.first().id}>`) || /[0-9]{18}/.test(args[0])) {
+            let u;
+            let m;
             // set title, description, user
-            const u = message.mentions.users.first();
-            const m = message.guild.member(u);
+            if (message.mentions.users) u = message.mentions.users.first();
+            if (/[0-9]{18}/.test(args[0])) {
+                message.guild.members.fetch(args[0])
+                    .then(mem => u = mem)
+                    .catch(err => {
+                        h.setEmbed(message, banEmbed, {title: fieldTitle + `\``, dx: err});
+                        return;
+                    });
+            }
+            
+            if (u) m = message.guild.member(u);
             fieldTitle += ` @${u.tag}\``
 
             // if member is not bannable, reply and bail
             if (!m.bannable) {
-                fieldDes += `${message.author} you hold no dominion over ${m}.`
-                embed.setTitle(fieldTitle).setDescription(fieldDes);
-                message.reply(embed);
-                embed.setTitle('').setDescription('');
+                fieldDes += `${message.author} is unable to ban ${m}.`
+                h.setEmbed(message, banEmbed, {title: fieldTitle, dx: fieldDes})
                 return;
             }
 
-            fieldDes += `${m} has been banned by ${message.author}`;
-            args.shift(); // remove command from args
-            var bandays = args.shift(); // first remaining arg
-            if (isNaN(bandays)) {
-                args.unshift(bandays);
-                bandays = 3;
+            args.shift(); // remove member from args
+            var bandays = 3;
+            if (args.length >= 1) {
+                bandays = args.shift(); // first remaining arg
+                if (isNaN(bandays)) {
+                    args.unshift(bandays);
+                    bandays = 3;
+                }
             }
-            fieldDes += ` for ${bandays} days.`;
-            var breason = ``;
+
             // append reasons
-            if (args) {
-                fieldDes += `\nReason: `;
+            var breason = ``;
+            if (args.length >= 1) {
+                breason = `\nReason:`;
                 let i = 0;
                 while (i < args.length) {
                     breason += ` ${args[i]}`;
@@ -46,16 +58,16 @@ module.exports.run = (message, embed, args) => {
                     m
                     .ban({days: bandays, reason: breason})
                     .then(()=>{
-                        fieldDes += `${breason}\nLet this be a warning to the rest of you.`
-                        embed.setTitle(fieldTitle).setDescription(fieldDes);
-                        message.reply(embed);
-                        embed.setTitle('').setDescription('');
+                        fieldDes += `${m} has been banned by ${message.author} for ${bandays} days.`;
+                        if (breason.length) fieldDes += breason;
+                        fieldDes += `\nLet this be a warning to the rest of you.`
+                        h.setEmbed(message, banEmbed, {title: fieldTitle, dx: fieldDes});
+                        console.log(`${message.guild.name}: ${fieldDes}`);
                     })
-                    .catch(()=>{
-                        fieldDes = `Unable to ${this.name} ${u}`;
-                        embed.setTitle(fieldTitle).setDescription(fieldDes);
-                        message.reply(embed);
-                        embed.setTitle('').setDescription('');
+                    .catch((err)=>{
+                        fieldDes = `Unable to ${this.help.name} ${u}`;
+                        h.setEmbed(message, banEmbed, {title: fieldTitle, dx: `${fieldDes}\n${err}`});
+                        console.log(`${message.guild.name}: ${this.help.name} command issue failed:\n${err}`);
                         return;
                     });
                 }
@@ -63,10 +75,9 @@ module.exports.run = (message, embed, args) => {
 
         } else {
 
-            fieldTitle += ` help\``;
-            embed.setTitle(fieldTitle).setDescription(`${this.help}`);
-            message.reply(embed);
-            embed.setTitle('').setDescription('');
+            fieldTitle += `\``;
+            fieldDes += `For help with this command, type \`${bot.prefix}help ${this.help.name}\``;
+            h.setEmbed(message, banEmbed, {title: fieldTitle, dx: fieldDes});
 
         }
 
@@ -74,7 +85,7 @@ module.exports.run = (message, embed, args) => {
 
 module.exports.help = {
     name: "ban",
-    description: "Mod tool for banning members",
-    help: "\`ban @user (days) (reason)\` if no days, defaults to 3 days",
+    description: "Mod tool for banning members.  They can only re-join if they are unbanned.",
+    usage: "\`ban @user (days) (reason)\` if no days, defaults to 3 days",
     aliases: ["b"],
 };

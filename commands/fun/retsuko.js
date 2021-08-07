@@ -1,16 +1,19 @@
-module.exports.run = (message, embed, args) => {
+const h = require('../helpers/helpers2.js');
+
+module.exports.run = (bot, message, args) => {
+
+        var rEmbed = h.createEmbed(bot);
+
         var fieldTitle = `\`!retsuko`;
-        if (args[0] in this.pics == false || args[0] == 'help') {
+        if (args[0] in this.help.pics == false || args[0] == 'help') {
             fieldTitle += ` help\``;
             // send picture if argument matches
-            embed.setDescription(`${this.help.usage}`);
+            rEmbed.setDescription(`${this.help.usage}`);
         } else {
             fieldTitle += ` ${args[0]}\``;
-            embed.setImage(this.help.pics[args[0]]);
+            rEmbed.setImage(this.help.pics[args[0]]);
         }
-        embed.setTitle(fieldTitle);
-        message.reply(embed);
-        embed.setDescription('').setImage('');
+        h.setEmbed(message, rEmbed, {title: fieldTitle});
 };
 
 module.exports.help = {

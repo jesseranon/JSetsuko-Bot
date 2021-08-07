@@ -1,9 +1,13 @@
 const fs = require('fs');
 const { sep } = require('path');
 const { Client, Collection, MessageEmbed } = require('discord.js');
-const { prefix, token, creatorid, guildsmanaged, permissions } = require('./config.json');
+const config = require('./config.json');
 const bot = new Client();
 ["commands", "aliases", "h"].forEach(x => bot[x] = new Collection());
+
+// Attaching config to bot so it can be accessed by commands if needed
+// bot.config = config;
+bot.prefix = config["prefix"];
 
 const load = (d = "./commands/") => {
 
@@ -40,7 +44,6 @@ const load = (d = "./commands/") => {
 }
 
 load();
-const h = bot.h.get('helpers');
 
 //uncomment next line to troubleshoot command module handling
 //console.log(client.commands);
@@ -49,16 +52,8 @@ const h = bot.h.get('helpers');
 bot.once('ready', () => {
     console.log('JSetsuko-Bot is online!');
     // console.log(bot.commands);
-    // console.log(bot.aliases);
-    console.log(bot.h);
-    h.test();
+    console.log(bot.aliases);
 });
-
-// Generate generic embed
-var botEmbed = new MessageEmbed()
-     .setAuthor('@JSetsuko-Bot', bot.commands.get('retsuko').help.pics["bot-avatar"])
-     .setThumbnail(bot.commands.get("retsuko").help.pics["bot-avatar"])
-     .setColor('ORANGE');
 
 //listen for messages sent in all channels the bot is in
 bot.on('message', message => {
@@ -70,7 +65,7 @@ bot.on('message', message => {
     if (message.content.startsWith(`<@!`) && message.mentions.has(bot.user) && message.mentions.users.size == 1) {
         
         //special response to creator
-        if (message.author.id == creatorid) {
+        if (message.author.id == config.creatorid) {
             message.reply(`buy 20 outfits right now and get ten percent off <3`)
                 .then(() => console.log(`Be my whale, Retsuko`))
                 .catch(console.error);
@@ -78,7 +73,7 @@ bot.on('message', message => {
 
         //respond with help
         try {
-            bot.commands.get('help').run(message,botEmbed);
+            bot.commands.get('help').run(bot, message);
         } catch (error) {
             console.log(`There was an error trying to execute !help via @JSetsuko-Bot tag`);
         }
@@ -86,19 +81,21 @@ bot.on('message', message => {
     } else {
 
         //ignore messages that don't start with a !
-        if (!message.content.startsWith(prefix)) return;
+        if (!message.content.startsWith(config.prefix)) return;
 
         //curate would-be commands and rest of string into an array
-        const args = message.content.slice(prefix.length).trim().split(/ +/);
+        const args = message.content.slice(config.prefix.length).trim().split(/ +/);
         const cmd = args.shift().toLowerCase();
 
         let command;
 
         //cull non-commands
         if (bot.commands.has(cmd)) {
-            console.log(command)
+            command = bot.commands.get(cmd);
         } else if (bot.aliases.has(cmd)) {
             command = bot.commands.get(bot.aliases.get(cmd));
+        } else {
+            return;
         }
 
         // // listen for message coming in only from certain guilds
@@ -122,27 +119,24 @@ bot.on('message', message => {
         // console.log(awaymath);
         // console.log(away > awaymath);
 
-        // mod commands check permissions for user and bot -- 
-        if (command in permissions) {
-            if (!message.member.hasPermission('ADMINISTRATOR') || !message.guild.me.hasPermission('ADMINISTRATOR')) {
-                if (!message.member.hasPermission(permissions[command]) || !message.guild.me.hasPermission(permissions[command])) {
-                    //bot hasn't been granted permission
+        // in theory, this prevents mod tools from being called by
+        // members without proper permissions
+        
+        if (command.help.name in config.permissions) {
+            console.log(`Mod tool being called`);
+            if (!message.member.hasPermission('ADMINISTRATOR')) {   //if not an admin
+                if (!message.member.hasPermission(config.permissions[command.help.name])) { //must have specific permission
                     console.log(`${message.author.tag} used !${command} in ${message.guild.name}.  It failed...`);
                     return;
                 }
             }
-            //if you made it here, do the thing because you both can
-            console.log(`Sufficient permissions to perform Mod Tool !${command}`);
         }
 
-        // // uncomment next line for troubleshooting
-        // console.log(message.content);
-
-        //execute commands from modules
+        //if you made it here, the author is able to do the thing
         try {
-            command.run(message, botEmbed, args);
+            command.run(bot, message, args);
         } catch (error) {
-            console.log(`There was an error trying to execute !${command}`);
+            console.log(`There was an error trying to execute ${config.prefix}${command}`);
         }
 
     }
@@ -150,4 +144,4 @@ bot.on('message', message => {
 });
 
 //login
-bot.login(token);
+bot.login(config.token);

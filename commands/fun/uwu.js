@@ -1,17 +1,21 @@
-module.exports.run = (message, embed, args) => {
+const h = require('../helpers/helpers2.js');
+
+module.exports.run = (bot, message, args) => {
+        var uwuEmbed = h.createEmbed(bot);
+
         var fieldTitle = `\`!uwu`;
         var fieldDes = ``;
         if (args[0] == 'toggle') {
             fieldTitle += ` toggle\``;
-            this.toggle = !this.toggle;
+            this.help.toggle = !this.help.toggle;
             if (this.help.toggle) {
                 fieldDes += `My UwU's have been activated ${this.help.description}`;
             } else {
                 fieldDes += `My UwU's have been snatched ${this.help.description}`;
             }
-        } else if (!args.length || !this.toggle) {
+        } else if (!args.length || !this.help.toggle) {
             fieldTitle += `\``;
-            fieldDes += `${this.description}`;
+            fieldDes += `${this.help.description}`;
         } else if (this.help.toggle) {
             // change all r and l's in args to w's and return them in a message.
             fieldTitle += ` (message)\``;
@@ -29,9 +33,8 @@ module.exports.run = (message, embed, args) => {
             fieldTitle += ` help\``;
             fieldDes += `${this.help.usage}`;
         }
-        embed.setTitle(fieldTitle).setDescription(fieldDes);
-        message.reply(embed);
-        embed.setDescription('');
+
+        h.setEmbed(message, uwuEmbed, {title: fieldTitle, dx: fieldDes});
 };
 
 module.exports.help = {

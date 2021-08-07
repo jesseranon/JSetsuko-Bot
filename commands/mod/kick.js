@@ -1,9 +1,11 @@
-module.exports.run = (message, embed, args) => {
+const h = require('../helpers/helpers2.js');
 
-        console.log(`*****MOD TOOLS: ${this.name} evoked in ${message.guild.name} by ${message.author.tag}.*****`);
+module.exports.run = (bot, message, args) => {
 
+        var kickEmbed = h.createEmbed(bot);
         var fieldTitle = `\`!kick`;
         var fieldDes = ``;
+        
         // ensure first argument is a user
         if (message.mentions.users.size == 1 && args[0] == `<@!${message.mentions.users.first().id}>`) {
 
@@ -13,19 +15,16 @@ module.exports.run = (message, embed, args) => {
             fieldTitle += ` @${u.tag}\``
 
             if (!m.kickable) {
-                fieldDes += `${message.author} you hold no dominion over ${m}.`
-                embed.setTitle(fieldTitle).setDescription(fieldDes);
-                message.reply(embed);
-                embed.setTitle('').setDescription('');
+                fieldDes += `${message.author} is unable to kick ${m}.`
+                h.setEmbed(message, kickEmbed, {title: fieldTitle, dx: fieldDes})
                 return;
             }
             
-            fieldDes += `${u} has been kicked by ${message.author}.`;
             args.shift();
             var reason = ``;
             // append reasons
             if (args.length) {
-                fieldDes += `\nReason:`;
+                reason += `\nReason:`;
                 let i = 0;
                 while (i < args.length) {
                     reason += ` ${args[i]}`;
@@ -38,14 +37,14 @@ module.exports.run = (message, embed, args) => {
                     m
                     .kick(reason)
                     .then(() => { //returns GuildMember
-                        embed.setTitle(fieldTitle).setDescription(`${fieldDes} ${reason}`);
-                        message.reply(embed);
-                        embed.setTitle('').setDescription('');
+                        fieldDes += `${u} has been kicked by ${message.author}.`;
+                        if (reason.length) fieldDes += reason;
+                        h.setEmbed(message, kickEmbed, {title: fieldTitle, dx: `${fieldDes}`});
+                        console.log(`${message.guild.name}: ${fieldDes}`);
                     })
                     .catch(err=>{
-                        embed.setTitle(fieldTitle).setDescription(err);
-                        message.reply(embed);
-                        embed.setTitle('').setDescription('');
+                        h.setEmbed(message, kickEmbed, {title: fieldTitle, dx: err})
+                        console.log(`${message.guild.name}: ${this.help.name} command issue failed:\n${err}`);
                         return;
                     });
                 }
@@ -53,17 +52,16 @@ module.exports.run = (message, embed, args) => {
 
         } else {
 
-            fieldTitle += ` help\``;
-            embed.setTitle(fieldTitle).setDescription(this.help);
-            message.reply(embed);
-            embed.setTitle('').setDescription('');
+            fieldTitle += `\``;
+            h.setEmbed(message, kickEmbed, {title: fieldTitle, dx: `For help with this command, type \`${bot.prefix}help ${this.help.name}\``});
+            
         }
 
 };
 
 module.exports.help = {
     name: "kick",
-    description: "Mod tool for kicking a single user",
-    help: "\`kick @user (reason)\` but they can re-join later with an invite",
+    description: "Mod tool for kicking a single user. They can re-join later with an invite.",
+    usage: "\`!kick @user (reason)\`",
     aliases: ["k"],
 };

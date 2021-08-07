@@ -1,29 +1,42 @@
-const fs = require('fs');
 const h = require('../helpers/helpers2.js');
+const { MessageEmbed } = require('discord.js');
 
-module.exports.run = (message, embed, args='') => {
-        // const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
-        // if (this.description == '') {
-        //     for (const file of commandFiles) {
-        //         const command = require(`./${file}`);
-        //         if (command.name != 'help' && command.memberfacing) {
-        //             this.description += `\`!${command.name}\` => ${command.description}\n`;
-        //         }
-        //     }
-        // }
-        // embed.setTitle(`\`@JSetsuko-Bot\` or \`!help\``).setDescription(`${this.description}`);
-        // message.reply(embed);
-        // //reset embed
-        // embed.setDescription('');
-        const des = h.test();
-        console.log(des);
-        const r = h.setEmbed(message, embed, {dx: des, title: `I am leet hax0r`});
-        console.log(r);
-        message.reply(r);
+module.exports.run = (bot, message, args=[]) => {
+        var helpEmbed = h.createEmbed(bot);            
+
+        var ti = `\`${bot.prefix}${this.help.name}`;
+        var des = ``;
+
+        if (args.length) {
+            // help with particular command
+            if (bot.commands.has(args[0])) {
+                let cmd = bot.commands.get(args[0]);
+                console.log(cmd);
+                ti += ` ${cmd.help.name}\``,
+                des += `**Usage**: ${cmd.help.usage}
+                        **Description**: ${cmd.help.description}
+                        **Aliases**: ${cmd.help.aliases.join(', ')}`
+            } else {
+                ti += `\``
+                des += `Sorry, I can't help you with that.`
+            }
+                
+        } else {
+            // cycle through commands and display name: description of each
+            ti += `\` commands menu`;
+            for (const i of bot.commands) {
+                let cmd = i[1];
+                des += `**${cmd.help.name}** => ${cmd.help.description}\n`;
+            }
+        }
+
+        h.setEmbed(message, helpEmbed, {title: ti, dx: des});
+ 
 };
 
 module.exports.help = {
     name: "help",
-    description: `Shows commands`,
+    description: `Shows commands menu or helps with a single command.`,
+    usage: `\`!help\` or \`!help (commandname)\``,
     aliases: ["h"],
 };

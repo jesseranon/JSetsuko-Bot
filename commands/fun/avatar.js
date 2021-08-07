@@ -1,24 +1,27 @@
-module.exports.run = (message, embed, args) => {
+const h = require('../helpers/helpers2.js');
+
+module.exports.run = (bot, message, args) => {
+
+        var aEmbed = h.createEmbed(bot);
+
         var fieldTitle = `\`!avatar`;
         if (args[0] == 'me') {
             fieldTitle += ` me\``;
-            embed.setImage(`${message.author.displayAvatarURL({dynamic: true, size: 128})}`);
+            aEmbed.setImage(`${message.author.displayAvatarURL({dynamic: true, size: 128})}`);
         } else if (message.mentions.members.size) {
-            const userMentioned = message.mentions.users.first();
-            fieldTitle += ` \``+ '@' + userMentioned.tag;
-            embed.setImage(`${userMentioned.displayAvatarURL({dynamic: true, size: 128})}`);
+            const m = message.mentions.users.first();
+            fieldTitle += ` @${m.tag}\``;
+            aEmbed.setImage(`${m.displayAvatarURL({dynamic: true, size: 128})}`);
         } else {
-            fieldTitle += ` help\``
-            embed.setDescription(`${this.help.usage}`);
+            fieldTitle += `\``
+            aEmbed.setDescription(`${this.help.usage}`);
         }
-        embed.setTitle(`${fieldTitle}`)
-        message.reply(embed);
-        embed.setImage('').setDescription('');
+        h.setEmbed(message, aEmbed, {title:fieldTitle});
 };
 
 module.exports.help = {
     name: "avatar",
     description: "Look at someone's avatar.",
-    usage: "Try using \`!avatar me or @user\`",
+    usage: "\`!avatar me\` or \`!avatar @user\`",
     aliases: ["a"],
 }
