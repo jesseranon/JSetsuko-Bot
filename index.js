@@ -55,7 +55,7 @@ bot.once('ready', () => {
 
     //fetch designated rules/roles reaction messages for listening
     for (let g of Object.keys(bot.guildsmanaged)) {
-        if (g == "870147820366209055") {
+        if (g == Object.keys(bot.guildsmanaged)[1]) { //limiting to my own server for now
             //rules and roles
             ['rules', 'roles'].forEach(r => {
                 bot.guilds.cache.get(g).channels.cache.get(bot.guildsmanaged[g].channels[r]).messages.fetch()
