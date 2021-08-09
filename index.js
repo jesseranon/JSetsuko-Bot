@@ -2,12 +2,13 @@ const fs = require('fs');
 const { sep } = require('path');
 const { Client, Collection, MessageEmbed } = require('discord.js');
 const config = require('./config.json');
+
 const bot = new Client();
 ["commands", "aliases", "h"].forEach(x => bot[x] = new Collection());
+const dateOptions = {year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', timeZoneName: 'short'};
 
-// Attaching config to bot so it can be accessed by commands if needed
-// bot.config = config;
-bot.prefix = config["prefix"];
+    bot.prefix = config["prefix"];
+    bot.guildsmanaged = config["guildsmanaged"];
 
 const load = (d = "./commands/") => {
 
@@ -23,12 +24,12 @@ const load = (d = "./commands/") => {
 
                 if (pull.help && typeof pull.help.name === "string") {
                     //stuff
-                    if (bot.commands.get(pull.help.name)) return console.warn(`warning: Two or more commands have the same name ${pull.help.name}`)
+                    if (bot.commands.get(pull.help.name)) return console.warn(`WARNING Two or more commands have the same name ${pull.help.name}`)
                     bot.commands.set(pull.help.name, pull);
-                    console.log(`success Loaded command ${pull.help.name}`);
+                    console.log(`SUCCESS Loaded command ${pull.help.name}`);
                 } else {
                     //stuff
-                    console.log(`Error loading command in ${d}${dirs}. You have a missing help.name or help name is not a string.`)
+                    console.log(`ERROR loading command in ${d}${dirs}. You have a missing help.name or help name is not a string.`)
                     continue;
                 }
                 if (pull.help.aliases && typeof (pull.help.aliases) === "object") {
@@ -45,17 +46,71 @@ const load = (d = "./commands/") => {
 
 load();
 
-//uncomment next line to troubleshoot command module handling
-//console.log(client.commands);
+bot.helpers = bot.h.get('helpers');
 
 //initiate client
 bot.once('ready', () => {
     console.log('JSetsuko-Bot is online!');
-    // console.log(bot.commands);
-    console.log(bot.aliases);
 });
 
-//listen for messages sent in all channels the bot is in
+bot.on('messageUpdate', (om, nm) => {
+    if (nm.author.bot || om.content == nm.content) return;
+    let a = ``;
+    if (om.attachments.size > 0) {
+        om.attachments.each(att => {
+            a += `${att.url}`;
+        })
+    } 
+    var muEmbed = bot.helpers.createEmbed(bot)
+        .setTitle(`**EDITED MESSAGE**`);
+    var fieldDes = `**Author**: ${nm.author}
+                    **Channel**: ${nm.channel}
+                    **Old**: ${om.content}
+                    **New**: ${nm.content}
+                    **Attached**: ${a.length > 0 ? a : 'N/A'}
+                    [Jump!](${nm.url})
+                    Created: ${nm.createdAt.toLocaleDateString('en-US', dateOptions)} | Edited: ${nm.editedAt.toLocaleDateString('en-US', dateOptions)}`;
+    muEmbed.setDescription(fieldDes);
+    bot.helpers.setEmbed(nm, muEmbed, {cid: bot.guildsmanaged[nm.guild.id]["botchannel"]});
+});
+
+bot.on('messageDelete', (m) => {
+
+    var mdEmbed = bot.helpers.createEmbed(bot)
+        .setTitle(`**DELETED MESSAGE**`);
+    let a = ``;
+    if (m.attachments.size > 0) {
+        m.attachments.each(att => {
+            a += `${att.url}`;
+        })
+    } 
+    // **Attachment**: ${m.attachments}
+    var fieldDes = `**Author**: ${m.author}
+                    **Channel**: ${m.channel}
+                    **Text**: ${m.content}
+                    **Attached**: ${a.length > 0 ? a : 'N/A'}
+                    **Created**: ${m.createdAt.toLocaleDateString('en-US', dateOptions)}`;
+    mdEmbed.setDescription(fieldDes);
+    bot.helpers.setEmbed(m, mdEmbed, {cid: bot.guildsmanaged[m.guild.id]["botchannel"]});
+
+});
+
+bot.on('guildMemberAdd', member => {
+
+    if (member.guild.id != "870147820366209055") return; //works, but don't want it affecting channels other than my own for now.
+    //assign muted role
+    member.roles.set([bot.guildsmanaged[member.guild.id].roles.mute])
+        .then(() => {
+            //send welcome message
+            let roles = bot.guildsmanaged[member.guild.id].roles;
+            let rules = bot.guildsmanaged[member.guild.id].rules;
+            member.guild.channels.cache.get(bot.guildsmanaged[member.guild.id].general) //using general until I get channels situated.
+                .send(`Hey ${member}, welcome to **${member.guild}**! Assign yourself a role in ${member.guild.channels.cache.get(roles)} to get started after reading ${member.guild.channels.cache.get(rules)}`);
+        })
+        .catch(err => console.log(err));
+
+});
+
 bot.on('message', message => {
 
     //ignore messages that are not from a guild or are from a bot
@@ -123,7 +178,6 @@ bot.on('message', message => {
         // members without proper permissions
         
         if (command.help.name in config.permissions) {
-            console.log(`Mod tool being called`);
             if (!message.member.hasPermission('ADMINISTRATOR')) {   //if not an admin
                 if (!message.member.hasPermission(config.permissions[command.help.name])) { //must have specific permission
                     console.log(`${message.author.tag} used !${command} in ${message.guild.name}.  It failed...`);
