@@ -46,11 +46,29 @@ const load = (d = "./commands/") => {
 
 load();
 
+//import helper functions
 bot.helpers = bot.h.get('helpers');
 
 //initiate client
 bot.once('ready', () => {
     console.log('JSetsuko-Bot is online!');
+
+    //fetch designated rules/roles reaction messages for listening
+    for (let g of Object.keys(bot.guildsmanaged)) {
+        if (g == "870147820366209055") {
+            //rules and roles
+            ['rules', 'roles'].forEach(r => {
+                bot.guilds.cache.get(g).channels.cache.get(bot.guildsmanaged[g].channels[r]).messages.fetch()
+                .then(a => {
+                    a.forEach(b => {
+                        if (!bot.guildsmanaged[g][`${r}react`].includes(b.id)) bot.guildsmanaged[g][`m${r}react`].push(b.id);
+                    });
+                })
+                .catch(err => console.log(err));
+            });
+        }
+    
+    }
 });
 
 bot.on('messageUpdate', (om, nm) => {
@@ -71,7 +89,7 @@ bot.on('messageUpdate', (om, nm) => {
                     [Jump!](${nm.url})
                     Created: ${nm.createdAt.toLocaleDateString('en-US', dateOptions)} | Edited: ${nm.editedAt.toLocaleDateString('en-US', dateOptions)}`;
     muEmbed.setDescription(fieldDes);
-    bot.helpers.setEmbed(nm, muEmbed, {cid: bot.guildsmanaged[nm.guild.id]["botchannel"]});
+    bot.helpers.setEmbed(nm, muEmbed, {cid: bot.guildsmanaged[nm.guild.id].channels.botchannel});
 });
 
 bot.on('messageDelete', (m) => {
@@ -91,25 +109,44 @@ bot.on('messageDelete', (m) => {
                     **Attached**: ${a.length > 0 ? a : 'N/A'}
                     **Created**: ${m.createdAt.toLocaleDateString('en-US', dateOptions)}`;
     mdEmbed.setDescription(fieldDes);
-    bot.helpers.setEmbed(m, mdEmbed, {cid: bot.guildsmanaged[m.guild.id]["botchannel"]});
+    bot.helpers.setEmbed(m, mdEmbed, {cid: bot.guildsmanaged[m.guild.id].channels.botchannel});
 
 });
 
-bot.on('guildMemberAdd', member => {
+bot.on('guildMemberAdd', member => { //using for bot server only for now
 
-    if (member.guild.id != "870147820366209055") return; //works, but don't want it affecting channels other than my own for now.
+    if (member.guild.id != Object.keys(bot.guildsmanaged)[1]) return; //works, but don't want it affecting channels other than my own for now.
+
     //assign muted role
     member.roles.set([bot.guildsmanaged[member.guild.id].roles.mute])
         .then(() => {
             //send welcome message
-            let roles = bot.guildsmanaged[member.guild.id].roles;
-            let rules = bot.guildsmanaged[member.guild.id].rules;
-            member.guild.channels.cache.get(bot.guildsmanaged[member.guild.id].general) //using general until I get channels situated.
+            let roles = bot.guildsmanaged[member.guild.id].channels.roles;
+            let rules = bot.guildsmanaged[member.guild.id].channels.rules;
+            member.guild.channels.cache.get(bot.guildsmanaged[member.guild.id].channels.welcome)
                 .send(`Hey ${member}, welcome to **${member.guild}**! Assign yourself a role in ${member.guild.channels.cache.get(roles)} to get started after reading ${member.guild.channels.cache.get(rules)}`);
         })
         .catch(err => console.log(err));
 
 });
+
+bot.on('messageReactionAdd', (messageReaction, user) => { //using for bot server only for now
+    if (messageReaction.message.guild.id != Object.keys(bot.guildsmanaged)[1]) return;
+    let gid = messageReaction.message.guild.id;
+    let mid = messageReaction.message.id;
+    let roles = bot.guildsmanaged[gid].rolesreact;
+    let rules = bot.guildsmanaged[gid].rulesreact;
+    if (!roles.includes(mid) && !rules.includes(mid)) return;
+    // if has mute role and reacts to rules message, assign initiated role
+    memberid = user.id;
+    if (rules.includes(mid) && messageReaction.message.guild.members.cache.get(memberid).roles.cache.has(bot.guildsmanaged[gid].roles.mute)) {
+        let u = messageReaction.message.guild.members.cache.get(memberid);
+        return u.roles.set([bot.guildsmanaged[gid].roles.initiated]);
+    }
+    // if reacted to a roles assignment message, assign role
+});
+
+//bot.on('messageReactionRemove', (messageReaction, user) => {};
 
 bot.on('message', message => {
 

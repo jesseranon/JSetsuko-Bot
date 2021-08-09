@@ -29,10 +29,11 @@ Features
 5. one-bot welcome wagon
 6. "bah god! it's @non-bot-user's entrance music!" 
 
-- config.json - Removed to protect private information.  Contains the following key-value pair in its json Object that is used for commands:
+config.json - Removed to protect private information.  Contains the following key-value pair in its json Object that is used for commands:
 
-"prefix": "!",
-"permissions": {"mod-tool": "PERMISSION_FLAG"}
+- "prefix": "!",
+- "permissions": {"mod-tool": "PERMISSION_FLAG"}
+- guild information - includes roles, channels information
 
 - users.json - Removed to protect private information.  Will be used to store information for future moderation commands.
 

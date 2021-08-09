@@ -7,7 +7,7 @@ module.exports = {
     },
     createEmbed(bot) {
         const newEmbed = new MessageEmbed()
-            .setAuthor(`@${bot.user.username}`, bot.commands.get('retsuko').help.pics['bot-avatar'])
+            // .setAuthor(`@${bot.user.username}`, bot.commands.get('retsuko').help.pics['bot-avatar'])
             // .setThumbnail(bot.commands.get('retsuko').help.pics['bot-avatar'])
             .setColor('ORANGE');
         return newEmbed;
