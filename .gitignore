@@ -109,3 +109,6 @@ config.js
 
 # Users
 users.json
+
+# Guilds
+guilds.json

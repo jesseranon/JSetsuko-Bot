@@ -2,6 +2,7 @@ const fs = require('fs');
 const { sep } = require('path');
 const { Client, Collection, MessageEmbed } = require('discord.js');
 const config = require('./config.json');
+const guilds = require('./guilds.json');
 
 const bot = new Client();
 ["commands", "aliases", "h"].forEach(x => bot[x] = new Collection());
@@ -146,7 +147,8 @@ bot.on('messageReactionAdd', (messageReaction, user) => { //using for bot server
     // if reacted to a roles assignment message, assign role
 });
 
-//bot.on('messageReactionRemove', (messageReaction, user) => {};
+//bot.on('messageReactionRemove', (messageReaction, user) => { //exclusively for removing roles assigned through reaction messages 
+//};
 
 bot.on('message', message => {
 
@@ -233,6 +235,10 @@ bot.on('message', message => {
     }
 
 });
+
+// bot.on('guildCreate', g => {  // on first joining a guild
+
+// });
 
 //login
 bot.login(config.token);
