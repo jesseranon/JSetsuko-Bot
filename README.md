@@ -35,7 +35,7 @@ config.json - Removed to protect private information.  Contains the following ke
 - "permissions": {"mod-tool": "PERMISSION_FLAG"}
 - guild information - includes roles, channels information
 
-- users.json - Removed to protect private information.  Will be used to store information for future moderation commands.
+- guilds.json - Removed to protect private information.  Will be used to store information for future moderation commands.
 
 new-branch
 
